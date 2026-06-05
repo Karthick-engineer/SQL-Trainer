@@ -23,12 +23,15 @@ interface MysteryProps {
 
 export const CodeEditor: React.FC<MysteryProps> = ({ mystery }) => {
     const [code, setCode] = useState('-- Write your SQL query here\n');
+    // Test hook for Playwright
+    useEffect(() => { (window as any).setSqlCode = setCode; }, []);
     const [result, setResult] = useState<any[] | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isSuccess, setIsSuccess] = useState(false);
     const [showHint, setShowHint] = useState(false);
     const [showSolutions, setShowSolutions] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [executionTime, setExecutionTime] = useState<number | null>(null);
 
     const { markSolved, solvedQuestions } = useStore();
     const alreadySolved = solvedQuestions.includes(mystery.id);
@@ -37,8 +40,10 @@ export const CodeEditor: React.FC<MysteryProps> = ({ mystery }) => {
         // Initialize DB and run setup SQL when component mounts
         const setup = async () => {
             try {
+                console.log("Setting up DB with query: ", mystery.setup_sql);
                 await initDB();
                 await runQuery(mystery.setup_sql);
+                console.log("DB setup complete.");
             } catch (err) {
                 console.error("Failed to setup DB:", err);
             }
@@ -51,10 +56,13 @@ export const CodeEditor: React.FC<MysteryProps> = ({ mystery }) => {
         setError(null);
         setResult(null);
         setIsSuccess(false);
+        setExecutionTime(null);
 
         try {
             // Run user query
+            const startTime = performance.now();
             const userResult = await runQuery(code);
+            const endTime = performance.now();
             setResult(userResult);
 
             // Run expected query to compare
@@ -65,6 +73,7 @@ export const CodeEditor: React.FC<MysteryProps> = ({ mystery }) => {
 
             if (isMatch) {
                 setIsSuccess(true);
+                setExecutionTime(endTime - startTime);
                 if (!alreadySolved) {
                     markSolved(mystery.id);
                     confetti({
@@ -191,6 +200,7 @@ export const CodeEditor: React.FC<MysteryProps> = ({ mystery }) => {
                     <div className="flex-grow overflow-auto">
                         <CodeMirror
                             value={code}
+                            id="sql-editor"
                             height="100%"
                             theme="dark"
                             extensions={[sql()]}
@@ -216,7 +226,7 @@ export const CodeEditor: React.FC<MysteryProps> = ({ mystery }) => {
                         {isSuccess && (
                             <div className="mb-4 flex items-center gap-2 text-emerald-400 bg-emerald-950/30 p-3 rounded-lg border border-emerald-900/50">
                                 <CheckCircle className="w-5 h-5" />
-                                <span className="font-mono text-sm">Excellent deduction, Detective. The evidence matches.</span>
+                                <span className="font-mono text-sm">Excellent deduction, Detective. The evidence matches. (Executed in {executionTime?.toFixed(2)}ms)</span>
                             </div>
                         )}
 

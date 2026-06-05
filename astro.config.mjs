@@ -8,6 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://github.com',
   base: '/sql-learning-platform',
+  output: 'static',
   integrations: [react()],
 
   vite: {

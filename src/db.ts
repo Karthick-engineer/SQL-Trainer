@@ -17,19 +17,31 @@ const MANUAL_BUNDLES: duckdb.DuckDBBundles = {
 
 let db: duckdb.AsyncDuckDB | null = null;
 let connection: duckdb.AsyncDuckDBConnection | null = null;
+let initPromise: Promise<any> | null = null;
 
 export const initDB = async () => {
     if (db) return { db, connection: connection! };
+    if (initPromise) return initPromise;
 
-    const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
-    const worker = new Worker(bundle.mainWorker!);
-    const logger = new duckdb.ConsoleLogger();
+    initPromise = (async () => {
+        try {
+            const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
+            const worker = new Worker(bundle.mainWorker!);
+            const logger = new duckdb.ConsoleLogger();
 
-    db = new duckdb.AsyncDuckDB(logger, worker);
-    await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+            const newDb = new duckdb.AsyncDuckDB(logger, worker);
+            await newDb.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
-    connection = await db.connect();
-    return { db, connection };
+            const newConn = await newDb.connect();
+            db = newDb;
+            connection = newConn;
+            return { db, connection };
+        } catch (e) {
+            initPromise = null;
+            throw e;
+        }
+    })();
+    return initPromise;
 };
 
 export const runQuery = async (query: string) => {
