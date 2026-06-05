@@ -1,0 +1,1952 @@
+[
+  {
+    "id": 1,
+    "title": "Mystery #1: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #1.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 2,
+    "title": "Mystery #2: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #2.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 3,
+    "title": "Mystery #3: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #3.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 4,
+    "title": "Mystery #4: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #4.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 5,
+    "title": "Mystery #5: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #5.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 6,
+    "title": "Mystery #6: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #6.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 7,
+    "title": "Mystery #7: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #7.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 8,
+    "title": "Mystery #8: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #8.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 9,
+    "title": "Mystery #9: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #9.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 10,
+    "title": "Mystery #10: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #10.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 11,
+    "title": "Mystery #11: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #11.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 12,
+    "title": "Mystery #12: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #12.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 13,
+    "title": "Mystery #13: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #13.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 14,
+    "title": "Mystery #14: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #14.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 15,
+    "title": "Mystery #15: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #15.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 16,
+    "title": "Mystery #16: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #16.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 17,
+    "title": "Mystery #17: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #17.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 18,
+    "title": "Mystery #18: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #18.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 19,
+    "title": "Mystery #19: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #19.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 20,
+    "title": "Mystery #20: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #20.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 21,
+    "title": "Mystery #21: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #21.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 22,
+    "title": "Mystery #22: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #22.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 23,
+    "title": "Mystery #23: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #23.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 24,
+    "title": "Mystery #24: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #24.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 25,
+    "title": "Mystery #25: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #25.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 26,
+    "title": "Mystery #26: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #26.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 27,
+    "title": "Mystery #27: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #27.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 28,
+    "title": "Mystery #28: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #28.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 29,
+    "title": "Mystery #29: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #29.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 30,
+    "title": "Mystery #30: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #30.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 31,
+    "title": "Mystery #31: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #31.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 32,
+    "title": "Mystery #32: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #32.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 33,
+    "title": "Mystery #33: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #33.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 34,
+    "title": "Mystery #34: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #34.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 35,
+    "title": "Mystery #35: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #35.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 36,
+    "title": "Mystery #36: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #36.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 37,
+    "title": "Mystery #37: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #37.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 38,
+    "title": "Mystery #38: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #38.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 39,
+    "title": "Mystery #39: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #39.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 40,
+    "title": "Mystery #40: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #40.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 41,
+    "title": "Mystery #41: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #41.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 42,
+    "title": "Mystery #42: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #42.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 43,
+    "title": "Mystery #43: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #43.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 44,
+    "title": "Mystery #44: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #44.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 45,
+    "title": "Mystery #45: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #45.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 46,
+    "title": "Mystery #46: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #46.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 47,
+    "title": "Mystery #47: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #47.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 48,
+    "title": "Mystery #48: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #48.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 49,
+    "title": "Mystery #49: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #49.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 50,
+    "title": "Mystery #50: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #50.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 51,
+    "title": "Mystery #51: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #51.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 52,
+    "title": "Mystery #52: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #52.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 53,
+    "title": "Mystery #53: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #53.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 54,
+    "title": "Mystery #54: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #54.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 55,
+    "title": "Mystery #55: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #55.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 56,
+    "title": "Mystery #56: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #56.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 57,
+    "title": "Mystery #57: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #57.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 58,
+    "title": "Mystery #58: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #58.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 59,
+    "title": "Mystery #59: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #59.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 60,
+    "title": "Mystery #60: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #60.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 61,
+    "title": "Mystery #61: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #61.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 62,
+    "title": "Mystery #62: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #62.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 63,
+    "title": "Mystery #63: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #63.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 64,
+    "title": "Mystery #64: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #64.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 65,
+    "title": "Mystery #65: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #65.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 66,
+    "title": "Mystery #66: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #66.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 67,
+    "title": "Mystery #67: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #67.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 68,
+    "title": "Mystery #68: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #68.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 69,
+    "title": "Mystery #69: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #69.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 70,
+    "title": "Mystery #70: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #70.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 71,
+    "title": "Mystery #71: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #71.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 72,
+    "title": "Mystery #72: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #72.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 73,
+    "title": "Mystery #73: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #73.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 74,
+    "title": "Mystery #74: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #74.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 75,
+    "title": "Mystery #75: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #75.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 76,
+    "title": "Mystery #76: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #76.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 77,
+    "title": "Mystery #77: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #77.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 78,
+    "title": "Mystery #78: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #78.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 79,
+    "title": "Mystery #79: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #79.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 80,
+    "title": "Mystery #80: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #80.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 81,
+    "title": "Mystery #81: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #81.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 82,
+    "title": "Mystery #82: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #82.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 83,
+    "title": "Mystery #83: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #83.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 84,
+    "title": "Mystery #84: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #84.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 85,
+    "title": "Mystery #85: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #85.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 86,
+    "title": "Mystery #86: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #86.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 87,
+    "title": "Mystery #87: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #87.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 88,
+    "title": "Mystery #88: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #88.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 89,
+    "title": "Mystery #89: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #89.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 90,
+    "title": "Mystery #90: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #90.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 91,
+    "title": "Mystery #91: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #91.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 92,
+    "title": "Mystery #92: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #92.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 93,
+    "title": "Mystery #93: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #93.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 94,
+    "title": "Mystery #94: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #94.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 95,
+    "title": "Mystery #95: The Secret of the Old Manor",
+    "description": "Detective, we need your help with The Secret of the Old Manor. This is an medium investigation requiring you to use Subqueries. Identify suspects who were seen at locations where a crime occurred. Clue #95.",
+    "lesson": "Subqueries allow you to nest investigations within investigations. Sometimes, though, joining the evidence directly is faster.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); CREATE TABLE crimes (location VARCHAR, type VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Bank'), (2, 'Opera'); INSERT INTO crimes VALUES ('Bank', 'Robbery');",
+    "expected_query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+    "solutions": [
+      {
+        "query": "SELECT DISTINCT s.name FROM suspects s JOIN sightings si ON s.id = si.suspect_id JOIN crimes c ON si.location = c.location;",
+        "description": "Joins are often faster than nested subqueries for this type of operation.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE id IN (SELECT suspect_id FROM sightings WHERE location IN (SELECT location FROM crimes));",
+        "description": "Nested subqueries, logical but can be slower on large datasets.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 96,
+    "title": "Mystery #96: The Scandal at the Docks",
+    "description": "Detective, we need your help with The Scandal at the Docks. This is an hard investigation requiring you to use Window Functions. Determine the chronological order of crimes in each district. Clue #96.",
+    "lesson": "Window functions help us see patterns over time or across different categories without losing the detail of individual events.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE crimes (id INTEGER, district VARCHAR, date VARCHAR); INSERT INTO crimes VALUES (1, 'West End', '1890-01-01'), (2, 'East End', '1890-01-02'), (3, 'West End', '1890-01-03');",
+    "expected_query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+    "solutions": [
+      {
+        "query": "SELECT id, district, date, RANK() OVER (PARTITION BY district ORDER BY date) as chronological_order FROM crimes;",
+        "description": "Using RANK() provides the ordering efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 97,
+    "title": "Mystery #97: The Case of the Missing Diamond",
+    "description": "Detective, we need your help with The Case of the Missing Diamond. This is an easy investigation requiring you to use Basic SELECT. Retrieve the list of suspects from the registry. Clue #97.",
+    "lesson": "Basic SELECT statements are the foundation of any investigation. Use SELECT * to gather all available intelligence on a subject.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT * FROM suspects;",
+    "solutions": [
+      {
+        "query": "SELECT * FROM suspects;",
+        "description": "The most straightforward way to list everyone.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 98,
+    "title": "Mystery #98: The Cipher in the Shadows",
+    "description": "Detective, we need your help with The Cipher in the Shadows. This is an medium investigation requiring you to use Filtering. We need to find suspects who have an alibi related to the opera. Clue #98.",
+    "lesson": "Filtering with WHERE clauses lets you narrow down your list of suspects based on specific clues.",
+    "difficulty": "Medium",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR, alibi VARCHAR); INSERT INTO suspects VALUES (1, 'Prof. Moriarty', 'At the university'), (2, 'Irene Adler', 'Opera rehearsal'), (3, 'Col. Moran', 'Playing cards');",
+    "expected_query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+    "solutions": [
+      {
+        "query": "SELECT name FROM suspects WHERE alibi LIKE '%Opera%';",
+        "description": "Using LIKE for pattern matching is optimal here.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name FROM suspects WHERE alibi = 'Opera rehearsal';",
+        "description": "Exact match if you know the exact alibi, but less flexible.",
+        "efficiency": "Fast"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 99,
+    "title": "Mystery #99: The Phantom of Baker Street",
+    "description": "Detective, we need your help with The Phantom of Baker Street. This is an hard investigation requiring you to use Aggregations. Calculate the total value of the stolen artifacts. Clue #99.",
+    "lesson": "Aggregations like SUM, COUNT, and AVG help you understand the scale of the crime.",
+    "difficulty": "Hard",
+    "setup_sql": "CREATE TABLE stolen_items (id INTEGER, artifact VARCHAR, value INTEGER); INSERT INTO stolen_items VALUES (1, 'Ruby Necklace', 5000), (2, 'Gold Pocket Watch', 1200), (3, 'Silver Cufflinks', 300);",
+    "expected_query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+    "solutions": [
+      {
+        "query": "SELECT SUM(value) AS total_value FROM stolen_items;",
+        "description": "Using SUM() aggregates the total efficiently.",
+        "efficiency": "Fastest"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  },
+  {
+    "id": 100,
+    "title": "Mystery #100: The Midnight Train Mystery",
+    "description": "Detective, we need your help with The Midnight Train Mystery. This is an easy investigation requiring you to use Joins. Connect the suspects to the locations they were seen at. Clue #100.",
+    "lesson": "Joins are how we connect different pieces of evidence to form a complete picture of the events.",
+    "difficulty": "Easy",
+    "setup_sql": "CREATE TABLE suspects (id INTEGER, name VARCHAR); CREATE TABLE sightings (suspect_id INTEGER, location VARCHAR); INSERT INTO suspects VALUES (1, 'Moriarty'), (2, 'Adler'); INSERT INTO sightings VALUES (1, 'Reichenbach Falls'), (2, 'Scandalous Photo Studio');",
+    "expected_query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+    "solutions": [
+      {
+        "query": "SELECT suspects.name, sightings.location FROM suspects JOIN sightings ON suspects.id = sightings.suspect_id;",
+        "description": "Inner join matches records existing in both tables.",
+        "efficiency": "Fastest"
+      },
+      {
+        "query": "SELECT name, location FROM suspects, sightings WHERE suspects.id = sightings.suspect_id;",
+        "description": "Implicit join syntax, generally discouraged but works.",
+        "efficiency": "Slower"
+      }
+    ],
+    "hint": "Analyze the schema carefully before making your deduction."
+  }
+]

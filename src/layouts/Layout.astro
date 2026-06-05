@@ -1,0 +1,28 @@
+---
+import '../styles/global.css';
+import { NavBar } from '../components/NavBar';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="SQL Sherlock - Learn SQL by solving mysteries" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col font-sans selection:bg-amber-500/30">
+		<NavBar client:load />
+		<main class="flex-grow">
+			<slot />
+		</main>
+	</body>
+</html>

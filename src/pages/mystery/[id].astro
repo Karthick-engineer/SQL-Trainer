@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { CodeEditor } from '../../components/CodeEditor';
+import questions from '../../data/questions.json';
+
+export function getStaticPaths() {
+  return questions.map(q => ({
+    params: { id: q.id.toString() },
+    props: { mystery: q },
+  }));
+}
+
+const { mystery } = Astro.props;
+---
+
+<Layout title={`Case #${mystery.id}: ${mystery.title}`}>
+	<CodeEditor client:only="react" mystery={mystery} />
+</Layout>

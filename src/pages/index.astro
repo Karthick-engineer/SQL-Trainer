@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { MysteryList } from '../components/MysteryList';
+import { Search } from 'lucide-react';
+---
+
+<Layout title="SQL Sherlock - The Game is Afoot!">
+	<div class="container mx-auto py-12 px-4">
+		<header class="text-center mb-16">
+			<h1 class="text-5xl md:text-7xl font-serif font-bold text-amber-500 mb-6 flex items-center justify-center gap-4">
+				<Search class="w-12 h-12 md:w-16 md:h-16" />
+				SQL Sherlock
+			</h1>
+			<p class="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto font-serif italic">
+				"Data, data, data! I cannot make bricks without clay."
+			</p>
+			<p class="mt-4 text-slate-500">
+				Solve 100 mysteries to rise from an Amateur Sleuth to a Master Detective.
+			</p>
+		</header>
+
+		<div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-2 shadow-2xl">
+			<MysteryList client:load />
+		</div>
+	</div>
+</Layout>
