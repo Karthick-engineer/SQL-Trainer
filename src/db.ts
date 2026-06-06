@@ -1,19 +1,6 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
-import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm?url';
-import mvp_worker from '@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js?url';
-import duckdb_wasm_eh from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url';
-import eh_worker from '@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url';
 
-const MANUAL_BUNDLES: duckdb.DuckDBBundles = {
-    mvp: {
-        mainModule: duckdb_wasm,
-        mainWorker: mvp_worker,
-    },
-    eh: {
-        mainModule: duckdb_wasm_eh,
-        mainWorker: eh_worker,
-    },
-};
+const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
 let db: duckdb.AsyncDuckDB | null = null;
 let connection: duckdb.AsyncDuckDBConnection | null = null;
@@ -25,8 +12,9 @@ export const initDB = async () => {
 
     initPromise = (async () => {
         try {
-            const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
-            const worker = new Worker(bundle.mainWorker!);
+            const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+            const workerUrl = URL.createObjectURL(new Blob([`importScripts("${bundle.mainWorker!}");`], { type: 'text/javascript' }));
+            const worker = new Worker(workerUrl);
             const logger = new duckdb.ConsoleLogger();
 
             const newDb = new duckdb.AsyncDuckDB(logger, worker);
